@@ -1,0 +1,117 @@
+\documentclass[11pt, letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator*{\argmin}{argmin}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\inner}[2]{\langle #1, #2 \rangle}
+\setlength{\parindent}{0pt}
+\title{Predicting Home Sale Prices using Linear Regression Models}
+\author{Garrett Ransom}
+\date{September 2018}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+\noindent
+We describe and analyze the use of regression models to predict home sale prices in King County, USA by utilizing one of Kaggle's open source dataset composed of 19 independent variables and roughly 21.6k observations. Using simple linear regression as a baseline, we explore regularization methods to see if changes to the cost function result in a boost to model performance. 
+\end{abstract}
+
+\section{Introduction}
+The objective of this project is to use different regression methods for the prediction task of pricing home sales in King County. Although other models could be utilized for the prediction of a continuous variable and potentially deliver stronger results, regression models were chosen as a means to disect the theoretical underpinnings of linear regression and use it against some data. Below, we detail the features collected for the dataset. During data cleaning, we dropped "id", "date", "yr\_built", "yr\_renovated", "zipcode", "waterfront", and "view" to avoid using features during model training with less predictive power.
+
+\begin{center}
+\begin{tabular} {| l | l | c | c |}
+		\hline
+		Column Name & Description \\
+		\hline
+		id & identification number for a house \\
+		date & selling date \\
+		price & dependent variable \\
+		bedrooms & number of bedrooms in the house \\
+		bathrooms & number of bathrooms in the house \\
+		sqft\textunderscore living & square footage of the house \\
+		sqft\textunderscore lot & square footage of the lot \\
+		floors & total floors in house \\
+		waterfront & house which has a view to a waterfront \\
+		view & has been viewed \\
+		condition & how good the condition is overall \\
+		grade & numeric grade given to the unit based on KC grading system \\
+		sqft\textunderscore above & square footage of house apart from basement \\
+		sqft\textunderscore basement & square footage of the basement \\
+		yr\textunderscore built & built year \\
+		yr\textunderscore renovated & year the house was renovated \\
+		zipcode & zip \\
+		lat & latitude coordinates \\
+		long & longtitude coordinates \\
+		sqft\textunderscore living15 & living room area in 2015 \\
+		sqft\textunderscore lot15 & lot size area in 2015 \\
+		\hline
+\end{tabular}
+\end{center}
+
+\section{Linear Regression Theory and Intuition}
+
+\subsection{Introduction to Basic Concepts of Linear Regression}
+As with all machine learning problems, we have an $(N \times p)$ input matrix $X^T = (X_1, X_2, X_3,...,X_p)$ that is used to predict a real-valued ouput $Y$. In the case of linear regression problems, we use our input matrix to predict a continuous output value $Y$. The linear regression model has the form $$f(X) = \beta_0 + \sum_{j=1}^{p} X_j\beta_j.$$ In this model, we consider $\beta_0$ the bias unit or the intercept, whereas the remainder of $\beta_j$'s represent the weights or coefficients that correspond to the respective input feature vectors of $X$. The features of $X$ can range from quantitative inputs, numeric transformations of qualitative  features, basis expansions, or combinations of variables $(X_3 = \displaystyle \frac {X_1} {X_2})$.
+
+Our objective is to find a function that best approximates the linear relationship between our input and output data. Least squares is often used for this purpose, where we pick coefficients that minimize the residual sum of squares 
+\begin{align}
+RSS(\beta) &= \sum_{i=1}^{N} (y_i - f(x_i))^2 \\
+&= \sum_{i=1}^{N}(y_i - \beta_0 - \sum_{j=1}^{p}x_{ij}\beta_j)^2.
+\end{align}
+
+We approach minimizing the residual sum of squates equation by first changing it to its vectorized form $$RSS(\beta) = (\vec{y} - \mathbf{X} \beta)^T(\vec{y} - \mathbf{X} \beta).$$
+By taking the partial derivative with respect to $\beta$ we get $$\frac {\partial RSS}{\partial \beta} = -2\mathbf{X}^T(\vec{y} - \mathbf{X} \beta).$$ Assuming that X is not a singular matrix, we can set our partial derivative to zero and obtain the unique solution $$\hat{\beta} = (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T\vec{y}.$$
+Therefore, we can predict values of our output vector by using the equation $$\hat{y} = \mathbf{X} \hat{\beta} = \mathbf{X}  (\mathbf{X}^T \mathbf{X})^{-1}  \mathbf{X}^T\vec{y}$$
+
+\subsection{Geometric Representation of Linear Regression}
+
+We can view $\textbf{X}$ as a matrix composed of $p$ n-dimensional column vectors in $\mathbb{R}^p$ such that it creates a subspace of $\mathbb{R}^p$ called $W = \spn\{\vec{x_1}, \vec{x_2},...,\vec{x_p}\}$. Given the output vector $\vec{y}$, we can project each element in $\vec{y}$ onto the subspace $W$ to get the best approximation of $\vec{y}$ called $\hat{\vec{y}}$. In this case, $\hat{\vec{y}}$ symbolizes the orthogonal projection of $\vec{y}$ onto the subspace $W$. The Best Approximation Theorem tells us that  $|| \vec{y} - \hat{\vec{y}}|| < || \vec{y} - \vec{v}||$ for any vector $\vec{v}$ within $W$.
+
+\subsection{Multiple Linear Regression}
+
+The geometric intuition provides a nice basis for expanding our concepts to multiple linear regression. In the perfect scenario, we desire a set of features within the data matrix $\textbf{X}$ that have no influence on eachother (equivalent to $\inner{\vec{x_j}}{\vec{x_k}} = 0 $ for j $\neq$ k). We can achieve this by making the data matrix orthogonal. In most real world environments, inputs are typically not orthogonal. Therefore, we have to carry out a process to orthogonalize the matrix. We typically use the \textit{Gram-Schmidt} procedure for this task, which ties in nicely with $\textbf{QR}$ decomposition where $\mathbf{X} = \mathbf{QR}$.
+
+\subsubsection{Gram-Schmidt and QR Decomposition}
+
+\noindent\rule{13cm}{1.9pt} \\
+ \textbf{Algorithm} \textit{The Gram-Schmidt Process}  \\
+\noindent\rule{13cm}{0.8pt} \\
+1. Let $\vec{v}_0 = \mathbf{x}_0 = \vec{1}$. \\
+2. For $j = 1, 2,..., p$\\
+\hspace*{18pt} Project $\mathbf{x}_j$ onto $\mathbf{z}_0, \mathbf{z}_1,...,\mathbf{z}_{j-1}$ to produce the coefficients $\hat{c}_{ij} = \\ 
+\hspace*{18pt} \inner{\vec{z}_i}{\vec{x}_j} / \inner{\vec{z}_i}{\vec{z}_i}$,
+$i = 0, 1,..., j - 1$ and the orthogonal basis vector $\vec{z}_j = \\ 
+\hspace*{18pt} \vec{x}_j - \sum_{k=1}^{j-1}\hat{c}_{kj}\vec{z}_k$\\
+3. Project $\vec{y}$ onto the subspace $W = \spn\{\vec{z}_0,...,\vec{z}_p\}$ to get the estimate $\hat{\beta}$ \\
+\noindent\rule{13cm}{1.9pt} \\ 
+
+For $k = 1,...,n, \vec{x}_k$ is in $\spn\{\vec{x}_1,...\vec{x}_k\} = \spn\{\vec{z}_1,...\vec{z}_k\}$. This means there are constants $r_{1k},...,r_{kk}$ such that $\vec{x}_k = r_{1k}\vec{z}_1 + ... + r_{kk}\vec{z}_k + 0 \cdot \vec{z}_{k+1} + ... + 0 \cdot \vec{z}_n$ and $\vec{r}_k = [r_{ik},...r_{kk},...0,...,0].$ \\
+
+So, there exists an orthogonal basis matrix \textbf{Q} composed of \textbf{z} vectors created from step 2 of the Gram-Schmidt Process multiplied by an upper triangle matrix \textbf{R} composed of vectors $\vec{r}_1,..., \vec{r}_n$ that is equal to the input matrix \textbf{X}.
+\begin{align}
+	&\mathbf{X} = \mathbf{QR} \\
+	&\hat{\beta} = \mathbf{R}^{-1}\mathbf{Q}^T\hat{\vec{y}} \\
+	&\hat{\vec{y}} = \mathbf{Q}\mathbf{Q}^T\vec{y}
+\end{align}
+
+\subsubsection{Regularization Methods}
+In prediction tasks, we'll often look for methods to help avoid overfitting data. High variance models have issues generalizing to new data. One way of creating models with less variance is to squash the values of its coefficients. This results in a less complex model that is more likely to perform well on new data. Two common types of methods are Ridge and Lasso Regularization, also referred to as \textbf{L2} and \textbf{L1} Regularization respectively.
+
+\begin{align}
+	\hat{\beta}^{ridge} = \argmin_{\beta} \left\{ \sum_{i=1}^{N}(y_i - \beta_0 - \sum_{j=1}^{p} x_{ij}\beta_j)^2 + \lambda \sum_{j=1}^{p} \beta_j^2 \right\} \\
+	\hat{\beta}^{lasso} = \argmin_{\beta} \left\{ \sum_{i=1}^{N}(y_i - \beta_0 - \sum_{j=1}^{p} x_{ij}\beta_j)^2 + \lambda \sum_{j=1}^{p} |\beta_j| \right\}
+\end{align}
+
+Here, we introduce a penalization parameter $\lambda$, which squashes coefficients closer to zero as it scales larger. Notice here, that if $\lambda = 0$, then the estimates will be equivalent to the solution for linear least squares. In the case of ridge regularization, the solution will push the least important coefficients very close to zero. But these coefficients will never be exactly equal to zero. The constraint region for ridge is $\beta_1^2 + ... + \beta_j^2 \leq t$, which forms a disk; while lasso's region is $|\beta_1| + ... + |\beta_j| \leq t$ and forms a diamond. In the case of lasso regularization, the least important coefficients can get pushed to exactly 0, equivalent to performing feature selection for us.
+
+\section{Experiment Results}
+
+During experiments, we used Ridge Regression and Lasso Regression as predictor models. In order to find the best lambda parameter, we used sci-kit learn's grid search method. For both ridge and lasso, the best lambda parameter came to be 100. In terms of model performance, both models also predicted with a roughly 63\% accuracy over the test set. 
+
+\section{Conclusion}
+A natural extension of this experiment would be to explore different models that also serve as predictors of continuous variables. Tree-based methods, as well as neural networks can also be used for such tasks. Polynomial regression could also better approximate the data. However, with a few lines of code, we were able to produce decent results.
+
+\end{document}
