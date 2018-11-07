@@ -13,3 +13,4 @@ each project with a [Jupyter Notebook](http://jupyter.org/) and write-up using [
 
 ### Projects
 * [KC House Sales Prediction](https://github.com/g2ransom/smart_machines/tree/master/kc_house) | [Kaggle Link](https://www.kaggle.com/harlfoxem/housesalesprediction)
+* [Mushroom Classification](https://github.com/g2ransom/smart_machines/tree/master/mushrooms) | [Kaggle Link](https://www.kaggle.com/uciml/mushroom-classification)
