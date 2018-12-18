@@ -15,23 +15,64 @@
 	\maketitle
 	\begin{abstract}
 		\noindent
-		blah blah blah
+		Eating certain types of mushrooms can be the difference between life and death. In this paper, we evaluate the performance of various classification models that can assist us in distinguishing poisonous mushrooms from edible ones. Our dataset is composed of 8124 examples described by 22 categorical variables and one binary predictor variable.
 	\end{abstract}
-blah blah blah
 
 \section{Introduction}
 blah blah blah
 
+
 \section{Classification Models}
 
-\subsection{Linear Discriminant Analysis}
-
 \subsection{Logistic Regression}
+In the case of Logistic Regression, we use the sigmoid function as a means to map our predictor variable as a probabilty such that $y \in \{0, 1\}$. 
+
+$$h_\theta(x) = g(\theta^Tx) = \frac{1}{1 + e^{-\theta^Tx}}$$ where
+$$g(z) = \frac{1}{1 + e^{-z}}$$
+
+We maximize the log likelihood function to find the best fit for $\theta$.
+
+$$\ell(\theta) = \sum_{i=1}^{m} y^{(i)}\log h(x^{(i)}) + (1-y^{(i)})\log(1 - h(x^{(i)})) $$
+
+We maximize the log likelihood by using gradient descent given by $\theta := \theta - \alpha\nabla_\theta \ell(\theta)$. By taking the partial derivatives with respect to $\theta$ for one training example $(x,y)$, we get the following equation:
+
+$$\frac{\partial}{\partial \theta_j} \ell(\theta) = (y - h_\theta(x))x_j$$
+
+Therefore, using stochastic gradient descent rule gives us:
+
+$$ \theta_j := \theta_j - \alpha(y^{(i)} - h_\theta(x^{(i)} )) x^{(i)}_j $$
 
 \subsection{Support Vector Machines}
 
 \subsection{Decision Trees}
 
+\subsection{Random Forests}
+
 \subsection{Naive Bayes}
+
+The Naive Bayes classifier is a model based on Bayes' theorem with the assumption of independence between features. Bayes' Rule tells us that
+$$p(A | B) = \frac{p(A)p(B | A) }{p(B)}.$$
+$p(A|B)$ is considered the posterior, while $p(A)$ is the prior and $p(B | A)$ is the likelihood and $p(B)$ is the evidence. \\
+
+But how does this apply to classification? If we represent a vector $\vec{x} = (x_1,...,x_n)$ by $n$ independent features, we calculate the probability of $\vec{x}$ belonging to a class $C_k$ as $p(C_k | x_1,...,x_n)$. Referring back to Bayes' theorem, the conditional probability can be represented as
+
+$$p(C_k | \vec{x}) = \frac{p(C_k)p(\vec{x} | C_k)}{p(\vec{x})}.$$
+
+In practice, we only pay attention to the numerator of this equation. We can further break down the representation into the joint probability model
+
+$$p(C_k, x_1,...,x_n)$$
+
+which can be further broken down by using the chain rule of probability
+
+
+$$p(C_k, x_1,..., x_n) = p(x_1 | x_2,...,x_n, C_k)p(x_2 | x_3,...,x_n, C_k)...p(x_{n-1} | x_n, C_k)p(x_n | C_k)p(C_k).$$ 
+
+Now, conditional independence comes into play, where we can assume that for each feature $x_i$, every other feature $x_j$ for $j \neq i$ is conditionally independent relative to $x_i$. This means that 
+$$p(x_i | x_i+1,...,x_n, C_k) = p(x_i | C_k).$$
+
+Therefore, the joint model can be represented as $$p(C_k | x_1,...,x_n) = p(C_k) \prod_{i=1}^{n}p(x_i | C_k).$$
+
+\section{Experiment Results}
+
 
 \end{document}
