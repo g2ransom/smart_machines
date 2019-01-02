@@ -44,6 +44,23 @@ $$ \theta_j := \theta_j - \alpha(y^{(i)} - h_\theta(x^{(i)} )) x^{(i)}_j $$
 
 \subsection{Support Vector Machines}
 
+In the case of Support Vector Machines, we create a classifier by using the equation
+$$h_{w,b} = g(w^{T}x + b).$$
+
+Given a training example $(x^{(i)}, y^{(i)})$, we can form the idea of a functional margin of $(w, b)$ with respect to the training example as
+$$ \hat{\gamma}^{(i)} = y^{(i)}(w^{T}x + b).$$
+
+Given a training set $S = \{(x^{(i)}, y^{(i)}); i=1,...,m \}$, we can define the functional and geometric margin as the smallest margin of across all training examples
+
+$$\gamma = \min_{i=1,...,m} \hat{\gamma}^{(i)}.$$
+
+Ultimately, by doing some cool math, we can use the following problem for finding the optimal margin classifier
+
+\begin{flalign}
+&\min_{w,b}  \frac{1}{2}||w||^2 \\
+&\text{s.t} \; \; \;  y^{(i)}(w^{T}x + b) \geq 1, i = 1,...,m
+\end{flalign}
+
 \subsection{Decision Trees}
 
 \subsection{Random Forests}
@@ -52,7 +69,7 @@ $$ \theta_j := \theta_j - \alpha(y^{(i)} - h_\theta(x^{(i)} )) x^{(i)}_j $$
 
 The Naive Bayes classifier is a model based on Bayes' theorem with the assumption of independence between features. Bayes' Rule tells us that
 $$p(A | B) = \frac{p(A)p(B | A) }{p(B)}.$$
-$p(A|B)$ is considered the posterior, while $p(A)$ is the prior and $p(B | A)$ is the likelihood and $p(B)$ is the evidence. \\
+$p(A|B)$ is considered the posterior, while $p(A)$ is the prior andtio $p(B | A)$ is the likelihood and $p(B)$ is the evidence. \\
 
 But how does this apply to classification? If we represent a vector $\vec{x} = (x_1,...,x_n)$ by $n$ independent features, we calculate the probability of $\vec{x}$ belonging to a class $C_k$ as $p(C_k | x_1,...,x_n)$. Referring back to Bayes' theorem, the conditional probability can be represented as
 
