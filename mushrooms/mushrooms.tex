@@ -62,7 +62,12 @@ Ultimately, by doing some cool math, we can use the following problem for findin
 \end{flalign}
 
 \subsection{Decision Trees}
+Suppose we want to create a decision tree for a classification task. If we have $N$ training examples composed of $p$ inputs $(x_i, y_i)$ for $i,...,N$ with $x_i = (x_{i1}, x_{i2},...,x_{ip})$, then there exists a set of splitting points that best classify output variables. We can split the data into $M$ regions $R_1, R_2,...,R_M$ and we can model the response as a constant $c_m$ in every region:
 
+$$f(x) = \sum_{m=1}^{M} c_m I(x \in R_m).$$
+
+We can use the Gini Index, Misclassification Error, or Cross-Entropy to find the best splitting points.
+$$\text{Gini Index:} \sum_{k \neq k'} \hat{p}_{mk} \hat{p}_{mk'} = \sum_{k=1}^{K} \hat{p}_{mk}(1 - \hat{p}_{mk})$$
 \subsection{Random Forests}
 
 \subsection{Naive Bayes}
