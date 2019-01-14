@@ -19,7 +19,7 @@
 	\end{abstract}
 
 \section{Introduction}
-blah blah blah
+In this report, we give a brief theoretical introduction to the algorithms that we'll be using for our machine learning task. Then, we give detail into our expirement results, followed by a brief conclusion. The goal of this paper is to find the best algorithm(s) for the task of predicting whether or not a mushroom is poisonous by a set of categorical features.
 
 
 \section{Classification Models}
@@ -69,6 +69,17 @@ $$f(x) = \sum_{m=1}^{M} c_m I(x \in R_m).$$
 We can use the Gini Index, Misclassification Error, or Cross-Entropy to find the best splitting points.
 $$\text{Gini Index:} \sum_{k \neq k'} \hat{p}_{mk} \hat{p}_{mk'} = \sum_{k=1}^{K} \hat{p}_{mk}(1 - \hat{p}_{mk})$$
 \subsection{Random Forests}
+Random forests use bootstrapping or bagging during training. The core purpose of random forests is to correct decision trees' natural tendency towards overfitting training data.
+
+\noindent\rule{13cm}{1.9pt} \\
+ \textbf{Algorithm} \textit{Random Forest Classifier}  \\
+ \noindent\rule{13cm}{0.8pt} \\
+1. For $b=1$ to $B$: \\
+\hspace*{10mm} (a) Draw a bootstrap sample of size $N$ from $X$, $Y$ and call these $X_b$, \hspace*{18mm}$Y_B$. \\
+\hspace*{10mm} (b) Train a classification free $f_b$ on $X_b$, $Y_b$. \\
+
+Let $\hat{C}_{b}(x) $ be the classification predication for the $b$th random forest tree. The output is the class that wins majority vote. \\
+\noindent\rule{13cm}{1.9pt} \\  
 
 \subsection{Naive Bayes}
 
@@ -94,7 +105,22 @@ $$p(x_i | x_i+1,...,x_n, C_k) = p(x_i | C_k).$$
 
 Therefore, the joint model can be represented as $$p(C_k | x_1,...,x_n) = p(C_k) \prod_{i=1}^{n}p(x_i | C_k).$$
 
-\section{Experiment Results}
+\section{Experiment Results and Conclusion}
+\begin{center}
+\begin{tabular}{ |c|c|}
+\hline
+Algorithm & Accuracy Score \\
+\hline
+Naive Bayes & 0.9327 \\
+Logisitc Regression & 1.0 \\
+Support Vector Machine & 0.997 \\
+Decision Tree & 1.0 \\
+Random Forest & 1.0 \\
+\hline
+\end{tabular}
+\end{center}
+
+Here, we must take note that even though all algorithms provide accuracy scores over 90 percent, that our task requires near perfection. Misclassifying a poisonous mushroom is the difference between life and death. Because of this, Naive Bayes actually provides an extremely low score by our criteria. We see that Logistic Regression, Decision Trees, and Random Forests all provide an accuracy score of 100 percent. Therefore, all three of them are quality choices for classifying mushrooms in the future.
 
 
 \end{document}
